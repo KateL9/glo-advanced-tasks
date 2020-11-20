@@ -1,7 +1,7 @@
 //Создать переменную num со значением 266219(тип данных число).
-let num = 266219;
-let multiple = 1;
-let arr = String(num).split('');
+let num = 266219,
+    multiple = 1,
+    arr = String(num).split('');
 
 //Вывести в консоль произведение(умножение) цифр этого числа.
 for (i = 0; i < arr.length; i++) {
