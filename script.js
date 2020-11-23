@@ -43,12 +43,14 @@ switch (lang) {
 }
 
 //через многомерный массив без ифов и switch.
-let arrOfLangs = {
-    'ru': ['Понедельник Вторник Среда Четверг Пятница Суббота Воскресенье'],
-    'en': ['Monday Tuesday Wednesday Thursday Friday Saturday Sunday']
-};
+let lang = prompt('Choose the language RU or EN', 'EN').toLowerCase();
+let arrOfLangs = [
+    ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+];
 
-console.log(arrOfLangs[lang]);
+let output = lang == 'ru' ? arrOfLangs[0] : arrOfLangs[1];
+console.log(output);
 
 /*У нас есть переменная namePerson. Если значение этой переменной “Артем” то вывести в консоль “директор”, 
 если значение “Максим” то вывести в консоль “преподаватель”, с любым другим значением вывести в консоль “студент”
