@@ -1,16 +1,17 @@
-//Создать переменную num со значением 266219(тип данных число).
-let num = 266219,
-    multiple = 1,
-    arr = String(num).split('');
+/*Создать массив week и записать в него дни недели в виде строк
+·        Вывести на экран все дни недели
+·        Каждый из них с новой строчки
+·        Выходные дни - курсивом
+·        Текущий день - жирным шрифтом(использовать объект даты)*/
 
-//Вывести в консоль произведение(умножение) цифр этого числа.
-for (i = 0; i < arr.length; i++) {
-    multiple *= arr[i];
-};
-console.log(multiple);
-
-//Полученный результат возвести в степень 3.
-let pow = multiple ** 3;
-
-//Вывести на экран первые 2 цифры полученного числа.
-alert(String(pow).substr(0, 2));
+let arr = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    toDay = new Date().getDay() - 1;
+arr.forEach((item, i, array) => {
+    if (i == 5 || i == 6) {
+        document.write(`<div><i>${item}</i></div>`)
+    } else if (i == toDay) {
+        document.write(`<div><b>${item}</b></div>`)
+    } else {
+        document.write(`<div>${item}</div>`)
+    }
+});
