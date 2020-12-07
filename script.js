@@ -1,16 +1,18 @@
-//Создать переменную num со значением 266219(тип данных число).
-let num = 266219,
-    multiple = 1,
-    arr = String(num).split('');
+/*
+Записывать пользователя в массив в виде объекта
+Данные: Имя и Фамилия в одном prompt
+Логин и пароль два отдельных prompt
+Выводить на страницу всех пользователей в виде списка
+На странице должны быть Имя, Фамилия, Дата регистрации в формате “20 июня 2020 г., 19:58:47”
+Данные записывать в localStorage и при обновлении страницы данные снова выводятся на страницу
+*/
 
-//Вывести в консоль произведение(умножение) цифр этого числа.
-for (i = 0; i < arr.length; i++) {
-    multiple *= arr[i];
-};
-console.log(multiple);
+let username = document.querySelector('#username'),
+    register = document.querySelector('#registerUser'),
+    login = document.querySelector('#login'),
+    list = document.querySelector('#list');
 
-//Полученный результат возвести в степень 3.
-let pow = multiple ** 3;
+register.addEventListener('click', function() {
+    names = prompt('Введите свое имя и фамилию', '');
 
-//Вывести на экран первые 2 цифры полученного числа.
-alert(String(pow).substr(0, 2));
+})
