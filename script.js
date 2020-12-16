@@ -1,16 +1,38 @@
-//Создать переменную num со значением 266219(тип данных число).
-let num = 266219,
-    multiple = 1,
-    arr = String(num).split('');
+'use strict';
+/*Написать любую анимацию, используя requestAnimationFrame и кнопку, активирующую её
+Кнопка должна ставить анимацию на паузу и продолжать анимацию после повторного нажатия + Добавить кнопку reset, 
+которая будет возвращать анимацию в первоначальное состояние*/
 
-//Вывести в консоль произведение(умножение) цифр этого числа.
-for (i = 0; i < arr.length; i++) {
-    multiple *= arr[i];
-};
-console.log(multiple);
+const img = document.querySelector('#img'),
+    start = document.querySelector('#start'),
+    reset = document.querySelector('#reset');
+let count = 0;
+let interv;
 
-//Полученный результат возвести в степень 3.
-let pow = multiple ** 3;
+function animation() {
+    interv = requestAnimationFrame(animation)
+    count++
+    if (count < 300) {
+        img.style.left = count + 'px';
+    } else {
+        cancelAnimationFrame(interv)
+    }
+}
+let stopStart = false;
+start.addEventListener('click', function() {
+    if (!stopStart) {
+        interv = requestAnimationFrame(animation);
+        stopStart = true;
+    } else {
+        stopStart = false;
+        cancelAnimationFrame(interv);
+    }
 
-//Вывести на экран первые 2 цифры полученного числа.
-alert(String(pow).substr(0, 2));
+});
+
+reset.addEventListener('click', function() {
+    count = 0;
+    img.style.left = count;
+    stopStart = false;
+    cancelAnimationFrame(interv);
+})
