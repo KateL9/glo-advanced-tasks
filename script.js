@@ -46,15 +46,14 @@ window.addEventListener('DOMContentLoaded', () => {
     //Menu
 
     /* 
-    В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
--  Крестика закрытия меню и пунктов меню.
--  На кнопку меню.
-    У вас должно быть максимум 2 обработчика события в  функции toggleMenu()
+В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
+Написать 1 обработчик для всех событий внутри функции toggleMenu()
+2) Реализовать следующий функционал: если клик произошел мимо меню, оно закрывается
 */
 
     const toggleMenu = () => {
-        const btnMenu = document.querySelector('.menu'),
-            menu = document.querySelector('menu');
+        const menu = document.querySelector('menu');
+
         const handlerMenu = () => {
             if (!menu.style.transform || menu.style.transform === `translate(-100%)`) {
                 menu.style.transform = `translate(0)`;
@@ -62,17 +61,21 @@ window.addEventListener('DOMContentLoaded', () => {
                 menu.style.transform = `translate(-100%)`;
             }
         };
-
-        btnMenu.addEventListener('click', handlerMenu);
-
-        menu.addEventListener('click', (event) => {
+        document.body.addEventListener('click', (event) => {
             let target = event.target;
-            if (
+            if (target.closest('.menu')) {
+                handlerMenu();
+            } else if (
                 target.classList.contains('close-btn') ||
-                target.closest('.menu') ||
-                target.closest('li')
-            ) menu.style.transform = `translate(-100%)`;
-        })
+                target.closest('a')
+            ) {
+                menu.style.transform = `translate(-100%)`;
+            } else if (!target.closest('menu')) {
+                menu.style.transform = `translate(-100%)`;
+                console.log(target);
+            }
+
+        });
     };
     toggleMenu();
     // Popup
@@ -87,8 +90,8 @@ window.addEventListener('DOMContentLoaded', () => {
                     let timer = setInterval(function() {
                         let timePassed = Date.now() - start;
                         popup.style.display = 'block';
-                        popupContent.style.left = timePassed / 3 + 'px';
-                        if (timePassed >= 2000) {
+                        popupContent.style.left = timePassed * 2 + 'px';
+                        if (timePassed >= 300) {
                             clearInterval(timer);
                         }
                     }, 20);
