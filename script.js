@@ -1,150 +1,143 @@
 'use strict';
-window.addEventListener('DOMContentLoaded', () => {
-
-
-    // Timer
-    function countTimer(deadline) {
-        let timerHours = document.querySelector('#timer-hours'),
-            timerMinutes = document.querySelector('#timer-minutes'),
-            timerSeconds = document.querySelector('#timer-seconds');
-
-        function getTimeRemaining() {
-            let dateStop = new Date(deadline).getTime(),
-                dateNow = new Date().getTime(),
-                timeRemaining = (dateStop - dateNow) / 1000,
-                seconds = Math.floor(timeRemaining % 60),
-                minutes = Math.floor((timeRemaining / 60) % 60),
-                hours = Math.floor(timeRemaining / 60 / 60);
-            return { timeRemaining, hours, minutes, seconds };
-        }
-
-        function updateClock() {
-            let timer = getTimeRemaining();
-            if (timer.hours.toString().length <= 1) {
-                timerHours.textContent = '0' + timer.hours;
-            } else { timerHours.textContent = timer.hours; }
-            if (timer.minutes.toString().length <= 1) {
-                timerMinutes.textContent = '0' + timer.minutes;
-            } else { timerMinutes.textContent = timer.minutes; }
-            if (timer.seconds.toString().length <= 1) {
-                timerSeconds.textContent = '0' + timer.seconds;
-            } else { timerSeconds.textContent = timer.seconds; }
-            if (timer.timeRemaining <= 0) {
-                clearInterval(idInterval);
-                timerHours.textContent = '00';
-                timerMinutes.textContent = '00';
-                timerSeconds.textContent = '00';
-
-            }
-        }
-
-        const idInterval = setInterval(updateClock, 10);
+class Todo {
+    constructor(form, input, todoList, todoCompleted) {
+        this.form = document.querySelector(form);
+        this.input = document.querySelector(input);
+        this.todoList = document.querySelector(todoList);
+        this.todoCompleted = document.querySelector(todoCompleted);
+        this.todoData = new Map(JSON.parse(localStorage.getItem('toDoList')));
+    }
+    addToStorage() {
+        localStorage.setItem('toDoList', JSON.stringify([...this.todoData]))
     }
 
-    countTimer('16 december 2020');
+    render() {
+        this.todoList.textContent = '';
+        this.todoCompleted.textContent = '';
+        this.input.value = '';
+        this.todoData.forEach(this.createItem, this);
+        this.addToStorage();
+    }
 
-    //Menu
+    createItem(todo) {
+        const li = document.createElement('li');
+        li.classList.add('todo-item');
+        li.key = todo.key;
+        li.insertAdjacentHTML('beforeend', `<span class="text-todo">${todo.value}</span>
+        <div class="todo-buttons">
+        <button class="todo-edit"></button>
+            <button class="todo-remove"></button>
+            <button class="todo-complete"></button>
+        </div>`);
 
-    /* 
-    В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
--  Крестика закрытия меню и пунктов меню.
--  На кнопку меню.
-    У вас должно быть максимум 2 обработчика события в  функции toggleMenu()
-*/
+        if (todo.completed) {
+            this.todoCompleted.append(li)
+        } else {
+            this.todoList.append(li);
+        }
+    }
 
-    const toggleMenu = () => {
-        const btnMenu = document.querySelector('.menu'),
-            menu = document.querySelector('menu');
-        const handlerMenu = () => {
-            if (!menu.style.transform || menu.style.transform === `translate(-100%)`) {
-                menu.style.transform = `translate(0)`;
-            } else {
-                menu.style.transform = `translate(-100%)`;
+    addTodo(e) {
+        e.preventDefault();
+        if (this.input.value.trim()) {
+            const newTodo = {
+                value: this.input.value,
+                completed: false,
+                key: this.generateKey()
             }
-        };
+            this.todoData.set(newTodo.key, newTodo);
+            this.render();
+        } else {
+            alert('Пустой ввод!');
+        }
 
-        btnMenu.addEventListener('click', handlerMenu);
+    }
+    generateKey() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
 
-        menu.addEventListener('click', (event) => {
-            let target = event.target;
-            if (
-                target.classList.contains('close-btn') ||
-                target.closest('.menu') ||
-                target.closest('li')
-            ) menu.style.transform = `translate(-100%)`;
-        })
-    };
-    toggleMenu();
-    // Popup
-    const togglePopUp = () => {
-        const popup = document.querySelector('.popup'),
-            popupBtn = document.querySelectorAll('.popup-btn'),
-            popupContent = document.querySelector('.popup-content');
-        popupBtn.forEach((elem) => {
-            elem.addEventListener('click', () => {
-                if (document.documentElement.clientWidth > 768) {
-                    let start = Date.now();
-                    let timer = setInterval(function() {
-                        let timePassed = Date.now() - start;
-                        popup.style.display = 'block';
-                        popupContent.style.left = timePassed / 3 + 'px';
-                        if (timePassed >= 2000) {
-                            clearInterval(timer);
-                        }
-                    }, 20);
-                } else {
-                    popup.style.display = 'block';
-                }
+    deleteItem(a) {
+        this.todoData.delete(a);
+        this.render();
+    }
+
+    completedItem(a) {
+        const todoData = this.todoData;
+        let val = todoData.values()
+        for (let el of val) {
+            if (el.key == a) {
+                el.completed ? el.completed = false : el.completed = true;
+            }
+        }
+        this.render();
+        // this.todoData.get(a).completed ? this.todoData.get(a).completed = false : this.todoData.get(a).completed = true;
+        // this.render();
+    }
+
+    animation(a) {
+        a = a.closest('.todo-item');
+
+        const anim = a.animate(
+            [{
+                transform: 'translate(0)',
+                opacity: 0.3,
+                width: '600px'
+            }, {
+                transform: 'translate(200px)',
+                opacity: 0.9,
+                width: '400px'
+            }, {
+                transform: 'translate(250px, 300px)',
+                opacity: 0.8,
+                width: '200px'
+            }], {
+                duration: 1000
             });
+    }
 
-            popup.addEventListener('click', (event) => {
-                let target = event.target;
-                if (target.classList.contains('popup-close')) {
-                    popup.style.display = 'none';
+    editItem = (el) => {
+        let text = el.querySelector('.text-todo');
+        text.contentEditable = "true";
+        text.style.border = "1px solid #000";
+        text.style.padding = "5px 15px";
+        alert('Нажмите Enter после редактирования');
+        el.addEventListener('keydown', (e) => {
+            text.contentEditable = "true";
+            if (e.keyCode === 13) {
+                if (text.textContent == null || text.textContent == '') {
+                    alert('Пустой ввод!');
                 } else {
-                    target = target.closest('.popup-content');
-                    if (!target) {
-                        popup.style.display = 'none';
-                    }
+                    text.contentEditable = "false";;
+                    this.todoData.get(el.key).value = text.textContent;
+                    this.render();
                 }
-            });
-        });
-    };
-
-    togglePopUp();
-
-    // Tabs
-    const tabs = () => {
-        const tabHeader = document.querySelector('.service-header'),
-            tab = tabHeader.querySelectorAll('.service-header-tab'),
-            tabContent = document.querySelectorAll('.service-tab');
-
-        const toggleTabContent = (index) => {
-            for (let i = 0; i < tabContent.length; i++) {
-                if (index === i) {
-                    tab[i].classList.add('active');
-                    tabContent[i].classList.remove('d-none');
-                } else {
-                    tab[i].classList.remove('active');
-                    tabContent[i].classList.add('d-none');
-
-                }
-            }
-        };
-
-        tabHeader.addEventListener('click', (event) => {
-            let target = event.target;
-            target = target.closest('.service-header-tab');
-
-            if (target) {
-                tab.forEach((item, i) => {
-                    if (item === target) {
-                        toggleTabContent(i);
-                    }
-                })
             }
         })
-    };
 
-    tabs();
-});
+    }
+
+    handler() {
+        const todoContainer = document.querySelector('.todo-container');
+        todoContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('todo-remove')) {
+                this.animation(event.target);
+                this.deleteItem(event.target.closest('.todo-item').key);
+            } else if (event.target.classList.contains('todo-complete')) {
+                this.animation(event.target);
+                this.completedItem(event.target.closest('.todo-item').key)
+            } else if (event.target.classList.contains('todo-edit')) {
+                this.editItem(event.target.closest('.todo-item'));
+            }
+        })
+    }
+
+    init() {
+        this.form.addEventListener('submit', this.addTodo.bind(this));
+        this.render();
+        this.handler();
+    }
+}
+
+const todo = new Todo('.todo-control', '.header-input', '.todo-list', '.todo-completed');
+
+todo.init();
