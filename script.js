@@ -319,8 +319,8 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         const numberCounter = (number, element) => {
-            const time = 300;
-            const step = 50;
+            const time = 200;
+            const step = 200;
 
             function showNumbers() {
                 let counter = 0,
